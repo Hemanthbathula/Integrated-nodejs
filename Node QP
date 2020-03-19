@@ -1,0 +1,307 @@
+Integrated Assignment
+Developing a Server Side application using Node & Express
+Instructions to use the project file provided:
+
+•	Read the problem statement, examples and the other details provided carefully and implement the solution
+•	Download the project FBWebService in to your system and unzip it
+•	Implement app.js as per the requirement and start your server
+•	Once the server started successfully, hit the URL http://localhost:1050/setupDb (GET request) to configure your mongoose database
+•	DO NOT alter the function name or the argument list of the function that is provided to you
+•	DO NOT add any new functions apart from the one given in the file where you write the solution
+
+Problem Description:
+Infy Airlines wants to automate the process of flight booking and management for which they want the implementation of the following.
+
+•	Book tickets in a flight
+•	View all bookings for any flight
+•	View all bookings done by a particular customer
+•	Update the booking of a customer
+
+
+In FBWebService Folder:
+File Name	Description
+src/model/dbsetup.js	
+
+Implemented
+src/model/flightBooking.js	
+src/utilities/connection.js	
+src/utilities/requestLogger.js	
+src/routes/routing.js	
+Partially Implemented
+src/utilities/errorLogger.js	
+src/utilities/validator.js	
+src/service/users.js	
+src/model/users.js	
+
+model/flightBooking.js: (Implemented)
+•	This class is used for storing and passing the flight booking details
+•	It converts a generic object to FlightBooking object.
+
+utilities/RquestLogger.js (Implemented)
+This file consists of a middleware function which logs all the requests made by the users into a text file RequestLogger.txt.
+
+utilities/connection.js (Implemented)
+•	This file contains the database schemas and a connection object.
+•	The connection object has the following two methods to establish connection with the database:
+o	getCustomerCollection() – for connecting to customerSchema
+o	getFlightCollection() – for connecting to flightSchema
+
+
+
+
+The database consists of the following three schema’s
+Schema	Field Name	Type	Validations	Collection
+
+
+customerSchema	customerId	String	--	
+
+Customer
+	customerName	String	--	
+	walletAmount	Number	--	
+	customerType	String	[Platinum, Gold, Silver]	
+
+
+flightBookingSchema	customerId	String	--	
+
+----
+	bookingId	Number	Unique	
+	noOfTickets	Number	min-1, max-5	
+	bookingCost	Number	min-0	
+
+
+
+flightSchema	flightId	String	--	
+
+
+Flight
+	AircraftName	String	--	
+	Fare	Number	--	
+	availableSeats	Number	--	
+	Status	String	[Running, Cancelled]	
+	Bookings	[flight Booking Schema]	default : []	
+
+
+model/dbsetup.js: (Implemented)
+This file contains the data for the schemas and a method to insert the data into the respective database schemas.
+
+
+ErrorLogger.js: (To be implemented)
+•	This file contains a errorLogger() function which should log the full stack trace of the error that may get thrown during execution of the program
+•	If there is some error in the code the entire error should be appended to the ErrorLogger.txt file
+•	If there is any error in appending the error to the Errorlogger.txt, it should display the message “Failed in logging error” in console
+•	If error object’s status property is set, then the response status should be set to error objects status value
+•	Else, the response status should be set to 500 and the error message should be sent as a JSON in the given format {“message” :<<message>>}
+•	errorLogger.js should be exported as a module.
+
+utilities/validator.js: (To be implemented)
+This file contains a Validator object with two methods i.e. validateFlightId() and validateBookingId()
+•	validateFlightId()
+o	This method should accept flightId as a parameter and validate it
+o	It should check if the flightId matches the following pattern:-
+<part1>>-<<part2>>
+part1 -> IND
+part2->three digits (where first digit cannot be 0)
+e.g. IND-101
+o	If the validation fails, it should throw an error with message “Error in flight Id” after setting error status as 400
+
+•	validateBookingId()
+o	This method should accept bookingId as a parameter and validate it
+o	It should check that the bookingId should always be of 4 digits only
+o	If the validation fails, it should throw an error with message “Error in booking Id” after setting the error status as 400
+
+
+model/users.js: (partially implemented)
+•	Instance of connection module is created by importing it
+•	This file contains flightBookingDb object with the following methods:
+o	generateId()
+o	checkCustomer()
+o	checkBooking()
+o	checkAvailability()
+o	bookFlight()
+o	getAllbookings()
+o	customerBookingsByFlight()
+o	getbookingsByFlightId()
+o	updateCustomerWallet()
+Note: Details of the mentioned methods are given in the next section
+•	Finally, flightBookingDb object is exported as a module
+
+flightBookingDb.generateID() :(Implemented)
+•	This method generates unique booking Ids for each new document that gets inserted
+•	The generated bookingId is returned
+
+flightBookingDb.checkCustomer() :(to be implemented)
+•	This method should take customerId as a parameter and check whether customer with given customerId exists or not
+•	A connection should be established to the database by invoking the getCustomerCollection() method of the connection object
+•	It should fetch the customer details from Customer collection for the given customerId
+•	If details found, it should return the customer Details
+•	Else, it should return null
+
+flightBookingDb.checkBooking() :(to be implemented)
+•	This method should take bookingId as a parameter and check whether booking with given bookingId exists or not
+•	A connection should be established to the database by invoking the getFlightCollection() method of the connection object
+•	It should fetch the customer details from Flight collection for the given flightId
+•	If details found, it should return the booking Details
+•	Else, it should return null
+
+FlightBookinDb.checkAvailability() :(to be implemented)
+•	This method should take flightId as a parameter and check whether flight with given flightId exists or not
+•	A connection should be established to the database by invoking the getFlightCollection() method of the connection object
+•	It should fetch the customer details from Flight collection for the given flightId
+•	If details found, it should return the flight Details
+•	Else, it should return null
+flightBookingDb.updateCustomerWallet() : (to be implemented)
+•	This method should accept customerId and bookingCost as parameters and update the wallet amount of the customer
+•	A connection should be established to the database by invoking the getCustomerCollection() method of the connection object
+•	It should update the wallet amount for the mentioned customerId by decreasing the bookingCost
+•	If the update was successful it should return true
+•	Else, it should return false
+
+
+flightBookingDb.bookFlight() :(to be implemented)
+•	This method should accept FlightBooking Object as a parameter, book tickets for a valid customer, update the number of seats available for the flight and the walletAmount of the customer.
+•	A connection should be established to the database by invoking the getFlightCollection() method of the connection object
+•	It should invoke generateId() method of flightBookingDb to generate unique booking Id for each flight booking.
+•	A new document should be inserted into the bookings column of Flight collection with the values of customerId, bookingId, noOfTickets, bookingCost.
+•	It should check for the successful insertion of document into the collection
+•	If successfully inserted, it should update the number of seats available in the Flight Collection for the corresponding flightId
+o	It should also check for successful updation of seats available in the Flight collection.
+o	If successfully updated, it should update the corresponding customer’s wallet amount by invoking updateCustomerWallet() method that takes customerId and bookingCost as parameters.
+o	If the wallet amount is updated for the customer, it should return the bookingId. Else, it should throw an error with message “Wallet not updated” after setting the error status as 502 (Bad gateway).
+o	Else, if the seats available for the flight does not get updated, it should throw an error with message “Seats not updated” after setting the error status as 502 (Bad gateway).
+•	Else, it should throw an error with message “Booking failed” with status 500
+
+
+
+
+flightBookingDb.getAllBookings() :(to be implemented)
+•	This method should not take any parameter and return all the bookings made in all the flights.
+•	A connection should be established to the database by invoking the getFlightCollection() method of the connection object
+•	It should fetch only the bookings field from all the flights.
+•	If bookings found, it should return the same bookings array
+•	Else, it should return null
+
+flightBookingDb. customerBookingsByFlight () :(to be implemented)
+•	This method should take customerId and flightId as a parameter and return an array of all the bookings made by the customer in the given flight
+•	A connection should be established to the database by invoking the getFlightCollection() method of the connection object
+•	It should fetch all the bookings made by a customer for the given flightId
+•	If bookings are found, it should return the same array of bookings
+•	Else, it should return null
+
+flightBookingDb. getbookingsByFlightId() :(to be implemented)
+•	This method should take flightId as a parameter and return all the bookings made in that flight
+•	A connection should be established to the database by invoking the getFlightCollection() method of the connection object
+•	It should fetch only the bookings detail from the flight collection for the given flightId.
+•	If bookings are found, it should return the same bookings array
+•	Else it should return null
+
+
+flightBookingDb.updateBooking() :(to be implemented)
+•	This method should take bookingId and noOfTickets as parameters and update the booking details for the customer and do the other necessary changes in the customer and flight collection
+•	A connection should be established to the database by invoking the getFlightCollection() method of the connection object
+•	It should update the noOfTickets for the given bookingId by adding the given noOfTickets.
+•	It should check if successfully updated, it should update the bookingCost for the booking by adding the required fare for the given noOfTickets (bookingCost = fare*noOfTickets)
+o	If bookingCost is successfully updated, it should update the wallet amount by subtracting the booking cost for the customer corresponding to the booking
+o	If wallet amount gets updated it should return the updated flight details by invoking checkAvailability() method of flightBookingDb object. Else, it should return null
+
+
+service/users.js (partially implemented)
+•	The required modules should be imported
+•	fBookingService object is created with the following methods:
+o	bookFlight()
+o	getAllBookings()
+o	customerBookingsByFlight()
+o	getBookingsByFlightId()
+o	updateBookings()
+Note: Details of above methods are given in next section
+•	Finally, it should export fBookingService as a module
+
+
+fBookingService.bookFlight() :(to be implemented)
+•	This method should take FlightBooking object as a parameter and book the mentioned number of tickets for an existing Flight.
+•	It should validate the flightId by invoking appropriate validator method.
+•	It should invoke the checkCustomer() method of flightBookingDb object by passing the customerId entered by the customer as a parameter which in turn returns customer details from the Customer collection
+•	If returned value is null, it should throw an error with message “Customer not registered. Register to proceed” after setting error status as 404
+•	Else, it should invoke checkAvailability() method of flightBookingDb object by passing the flightId entered by the user as a parameter which in turn returns flight details from the Flight collection
+•	If the returned value is null, it should throw an error with message “Flight Unavailable” after setting error status 404
+•	 If the status of the returned flight is “Cancelled”, it should throw an error with message “Sorry for the Inconvinience... <<flightId>> is cancelled!!” after setting error status 400
+•	If the availableSeats of the returned flight is 0, it should throw an error with message “Flight <<flightId>> is already full!!” after setting appropriate error status
+•	If the availableSeats of the returned flight is less than the required nOOfTickets, it should throw an error with message “Flight almost Full... Only <<availableSeats>> left!!” after setting error status as 406
+•	Else, it should assign the bookingCost value to the FlightBooking object (bookingCost = noOfTickets * fare)
+•	It should then check if the available wallet amount is sufficient for booking or not.
+•	If not, it should throw an error with message “Insufficient Wallet Amount. Add more Rs. <<amountNeeded>> to continue booking” after setting error status as 406
+•	Else, it should invoke the bookFlight() method of flightBookingDb object  which in turn returns the booking details
+•	Finally, it should return the same booking details
+
+fBookingService.getAllBookings() : (to be implemented)
+•	This method should not take any parameter and return all the bookings over all the flights
+•	It should invoke the getAllBookings() method of flightBookingDb object which in turn returns the array of booking details of all the flights
+•	If the returned value is null, it should throw an error with message “No Bookings is found in any flight” after setting error status as 404
+•	Else, it should return the same array of bookings
+
+fBookingService.customerBookingsByFlight() : (to be implemented)
+•	This method should take customerId and flightId and return the corresponding customer details
+•	It should invoke the checkCustomer() method of flightBookingDb object by passing customerId as parameter, which in turn returns the customer details
+•	If the returned value is null, it should throw an error with message “Invalid CustomerId!! Enter a valid customerId to view Details” after setting the appropriate error status.
+•	Else, it should invoke the checkAvailability() method of flightBookingDb by passing flightId as parameter, which in turn returns the corresponding flight details
+•	If the returned value is null, it should throw an error with message “Invalid FlightId!! Enter a valid FlightId to view Details”
+•	Else, it should invoke the customerBookingsByFlight() method of flightBookingDb by passing customerId and flightId as parameter which in turn returns the booking details for a customer in the given flightId.
+•	If the returned value is null, it should throw error with message “No Bookings found for <<customerId>> in <<flightId>>” after setting error status as 404
+•	Else, it should return the same booking details
+
+fBookingService.getbookingsByFlightId() :(to be implemented)
+•	This method should take flightId as a parameter and return the corresponding booking details
+•	It should invoke the getbookingsByFlightId() of flightBookingDb by passing flightId which in turn returns the corresponding booking details for that flight
+•	If the returned value is null, it should throw an error with message “No Bookings found in <<flightId>>” after setting error status as 404
+•	Else, it should return the same booking details
+
+fBookingService.updateBooking() :(to be implemented)
+•	This method should take bookingId and noOfTickets and update the corresponding booking details by doing the necessary changes wherever needed
+•	It should invoke the checkBooking() method of flightBookingDb object by passing bookingId as parameter, which in turn returns the flight and its booking details
+•	If the returned value is null, it should throw an error with message “No Bookings with bookingId <<bookingId>>” after setting the appropriate error status
+•	If the status of returned flight is “Cancelled”, it should throw an error with message “Sorry for the Inconvenience... <<flightId>> has been cancelled!!” after setting the error status as 406
+•	If the availableSeats of returned flight is 0, it should throw an error with message “Flight is already Full. Can't Book more tickets”, after setting the error status as 406
+•	If the availableSeats of returned flight is less than the required number of tickets, it should throw an error with message “Flight almost Full. Only <<availableSeats>> seat left”, after setting the error status as 406
+•	Else, it should check if the customer has sufficient walletAmount to book the required number of tickets by invoking checkCustomer() method of flightBookingDb object
+•	If wallet amount is less, it should throw an error with message “Insufficient Wallet Amount. Add more Rs. <<amountNeeded>> to continue booking” after setting error status as 406
+•	Else, it should invoke updateBooking() method of flightBookingDb object by passing bookingId and noOfTickets which in turn returns the updated flight details
+•	If the returned value is null, it should throw an error with message “update failed” after setting error status as 502
+
+routing.js: (to be implemented)
+•	It should import the required modules.
+•	The following two URI’s should be configured for booking, fetching details & updating bookings respectively
+URI:- /bookFlight
+•	It should configure the instance of Router, to handle the post request for the given URI.
+•	Once the request is received, it should create and populate FlightBooking object with the values present inside the request body
+•	It should invoke bookFlight() method of fBookingService by passing the FlightBooking object, which in turn returns a promise wrapped response
+•	If the promise is successful it should populate the JSON response in the given format: {"message": "Flight booking is successful with booking Id: <<bookingId>>”} with status as 201
+•	Else if the promise fails, it should forward the control to next handler by passing the error object as parameter
+
+URI:- /getAllBookings 
+It should also configure the instance of Router, in order to handle the GET request for the given URI.
+•	It should invoke getAllBookings() of fBookingService, which in turn returns a promise wrapped response
+•	If the promise is successful it should populate the JSON response with the bookings returned by the getAllBookings() of fBookingService
+•	Else if the promise is failed it should forward the control to next handler by passing the error object as parameter
+
+URI:- /customerBookings/:customerId/:flightId
+It should also configure the instance of Router, in order to handle the GET request for the given URI
+•	It should invoke customerBookingsByFlight() of fBookingService object by passing the customerId and flightId obtained from the URL, which in turn returns a promise wrapped response
+•	If the promise is successful it should populate the JSON response with the bookings returned by the customerBookingsByFlight() of fBookingService
+•	Else if the promise is failed it should forward the control to next handler by passing the error object as parameter
+
+URI:- /bookingsByFlight/:flightId
+It should also configure the instance of Router, in order to handle the GET request for the given URI
+•	It should invoke getbookingsByFlightId() of fBookingService object by passing the flightId obtained from the request params object, which in turn returns a promise wrapped response
+•	If the promise is successful it should populate the JSON response with the bookings returned by the getbookingsByFlightId() of fBookingService
+•	Else if the promise is failed it should forward the control to next handler by passing the error object as parameter
+
+URI:- /updateBooking/:bookingId
+It should also configure the instance of Router, in order to handle the PUT request for the given URI
+•	It should invoke updateBooking() of fBookingService object by passing the bookingId and noOfTickets obtained from the request params object, which in turn returns a promise wrapped response
+•	If the promise is successful it should populate the JSON response in the given format: {"message": "Booking successfully updated!! updated flight details <<flight>>”}
+•	Else if the promise fails, it should forward the control to next handler by passing the error object as parameter
+
+app.js: (To be implemented)
+•	All the required modules should be imported
+•	Middleware’s should be organized properly for their appropriate functionality
+•	The application should listen to requests coming through port 1050
+~~~~~~~~~~~~~~~~~~All The Best~~~~~~~~~~~~~~~~~
